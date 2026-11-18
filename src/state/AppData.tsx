@@ -3,6 +3,7 @@ import type { Profile } from '../core/types';
 import { openFitDb } from '../data/db';
 import { DEFAULT_PROFILE } from '../data/defaults';
 import { Repository } from '../data/repository';
+import { registerExercises } from '../data/catalog';
 
 export type ToastKind = 'info' | 'success' | 'warn' | 'error';
 
@@ -38,6 +39,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       try {
         const r = new Repository(await openFitDb());
         await r.seedIfEmpty(undefined, { demo: false });
+        registerExercises(await r.allCustomExercises());
         const p = await r.getProfile();
         if (!cancelled) {
           setProfileState(p);

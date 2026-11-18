@@ -1,5 +1,5 @@
 import { today } from '../core/dates';
-import { BackupSchema, ProfileSchema, type Backup } from '../core/schemas';
+import { BackupSchema, CustomExerciseSchema, ProfileSchema, type Backup } from '../core/schemas';
 import type {
   BodyWeight,
   ChatMessage,
@@ -10,6 +10,7 @@ import type {
   Profile,
   Workout,
   WorkoutTemplate,
+  Exercise,
 } from '../core/types';
 import type { FitDatabase } from './db';
 import { DEFAULT_FAVORITES, DEFAULT_PROFILE } from './defaults';
@@ -70,7 +71,7 @@ export class Repository {
 
   /** Borra todo y deja la app como recién instalada pero sin demo: perfil y favoritos por defecto. */
   async resetAll(): Promise<void> {
-    const stores = ['workouts', 'templates', 'meals', 'weights', 'foods', 'favorites', 'chat', 'meta'] as const;
+    const stores = ['workouts', 'templates', 'meals', 'weights', 'foods', 'favorites', 'chat', 'meta', 'customExercises'] as const;
     const tx = this.db.transaction([...stores], 'readwrite');
     await Promise.all(stores.map((s) => tx.objectStore(s).clear()));
     await Promise.all([
@@ -80,7 +81,23 @@ export class Repository {
     ]);
     await tx.done;
   }
+  /* ---------- Ejercicios propios ---------- */
 
+  async allCustomExercises(): Promise<Exercise[]> {
+    const list = await this.db.getAll('customExercises');
+    return list.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+  }
+
+  /** Valida antes de guardar: nunca entra a la base de datos un ejercicio mal formado. */
+  async saveCustomExercise(e: Exercise): Promise<Exercise> {
+    const valid = CustomExerciseSchema.parse(e) as Exercise;
+    await this.db.put('customExercises', valid);
+    return valid;
+  }
+
+  async deleteCustomExercise(id: string): Promise<void> {
+    await this.db.delete('customExercises', id);
+  }
   /* ---------- Perfil ---------- */
 
   async getProfile(): Promise<Profile> {
@@ -254,7 +271,7 @@ export class Repository {
   /* ---------- Copia de seguridad ---------- */
 
   async exportBackup(): Promise<Backup> {
-    const [profile, workouts, meals, weights, foods, favorites, templates ] = await Promise.all([
+    const [profile, workouts, meals, weights, foods, favorites, templates, customExercises] = await Promise.all([
       this.getProfile(),
       this.db.getAll('workouts'),
       this.db.getAll('meals'),
@@ -262,6 +279,7 @@ export class Repository {
       this.db.getAll('foods'),
       this.db.getAll('favorites'),
       this.db.getAll('templates'),
+      this.db.getAll('customExercises'),
     ]);
     return {
       app: 'fit-ai-tracker',
@@ -274,6 +292,7 @@ export class Repository {
       foods,
       favorites,
       templates,
+      customExercises,
     };
   }
 
@@ -283,7 +302,7 @@ export class Repository {
    */
   async importBackup(raw: unknown): Promise<{ records: number }> {
     const backup = BackupSchema.parse(raw);
-    const stores = ['workouts', 'meals', 'weights', 'foods', 'favorites', 'meta', 'templates'] as const;
+    const stores = ['workouts', 'meals', 'weights', 'foods', 'favorites', 'meta', 'templates', 'customExercises'] as const;
     const tx = this.db.transaction([...stores], 'readwrite');
     const ops: Promise<unknown>[] = [];
     backup.workouts.forEach((w) => ops.push(tx.objectStore('workouts').put(w)));
@@ -292,6 +311,7 @@ export class Repository {
     backup.foods.forEach((f) => ops.push(tx.objectStore('foods').put(f)));
     backup.favorites.forEach((f) => ops.push(tx.objectStore('favorites').put(f)));
     backup.templates.forEach((t) => ops.push(tx.objectStore('templates').put(t)));
+    backup.customExercises.forEach((e) => ops.push(tx.objectStore('customExercises').put(e as Exercise)));
     if (backup.profile) ops.push(tx.objectStore('meta').put(backup.profile, META.profile));
     ops.push(tx.objectStore('meta').put(true, META.seeded));
     await Promise.all(ops);

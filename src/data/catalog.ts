@@ -41,7 +41,7 @@ export const EXERCISES: Exercise[] = [
   { id: 'spanish_squat_iso', name: 'Sentadilla española isométrica (reps = segundos)', primary: 'quads', equipment: 'bodyweight', shoulderFriendly: true, increment: 5 },
 ];
 
-export const EXERCISE_MAP: ReadonlyMap<string, Exercise> = new Map(EXERCISES.map((e) => [e.id, e]));
+export const EXERCISE_MAP: Map<string, Exercise> = new Map(EXERCISES.map((e) => [e.id, e]));
 
 /**
  * Sustitutos que reducen la carga en el hombro. Criterio: agarre neutro, trayectoria guiada,
@@ -84,6 +84,19 @@ export const TEMPLATES: WorkoutTemplate[] = [
     ],
   },
 ];
+
+/**
+ * Añade ejercicios creados por el usuario al catálogo en memoria. Se llama al arrancar la app
+ * (con los guardados) y cada vez que se crea uno. Ignora ids que ya existen, así que
+ * nunca puede pisar un ejercicio del catálogo base.
+ */
+export function registerExercises(list: readonly Exercise[]): void {
+  for (const e of list) {
+    if (EXERCISE_MAP.has(e.id)) continue;
+    EXERCISES.push(e);
+    EXERCISE_MAP.set(e.id, e);
+  }
+}
 
 export function exerciseName(id: string): string {
   return EXERCISE_MAP.get(id)?.name ?? id;

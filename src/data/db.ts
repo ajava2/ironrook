@@ -1,5 +1,5 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
-import type { BodyWeight, ChatMessage, Favorite, FoodItem, MealEntry, Workout, WorkoutTemplate} from '../core/types';
+import type { BodyWeight, ChatMessage, Favorite, FoodItem, MealEntry, Workout, WorkoutTemplate, Exercise} from '../core/types';
 
 export interface FitDB extends DBSchema {
   workouts: { key: string; value: Workout; indexes: { by_date: string } };
@@ -11,12 +11,13 @@ export interface FitDB extends DBSchema {
   templates: { key: string; value: WorkoutTemplate };
   /** Clave-valor para objetos únicos: perfil, entreno en curso, marcas de sincronización. */
   meta: { key: string; value: unknown };
+  customExercises: { key: string; value: Exercise };
 }
 
 export type FitDatabase = IDBPDatabase<FitDB>;
 
 export const DB_NAME = 'fit-ai-tracker';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
 /**
  * Las migraciones se encadenan por versión: cada `if (oldVersion < N)` crea lo que la
@@ -36,6 +37,9 @@ export function openFitDb(name = DB_NAME): Promise<FitDatabase> {
       }
       if (oldVersion < 2) {
         db.createObjectStore('templates', { keyPath: 'id' });
+      }
+      if (oldVersion < 3) {
+        db.createObjectStore('customExercises', { keyPath: 'id' });
       }
     },
   });

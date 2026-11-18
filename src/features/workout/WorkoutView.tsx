@@ -14,6 +14,7 @@ import { ExercisePicker } from './ExercisePicker';
 import { TemplatesSection } from './TemplatesSection';
 import { ExerciseCard } from './ExerciseCard';
 import './workout.css';
+import { useCreateExercise } from './useCreateExercise';
 
 
 export function WorkoutView() {
@@ -99,6 +100,7 @@ interface ActiveProps {
 function ActiveWorkout({ workout, onChange }: ActiveProps) {
   const { repo, profile, invalidate, toast } = useAppData();
   const timer = useRestTimer();
+  const createExercise = useCreateExercise();
   const history = useQuery((r) => r.allWorkouts(), [], [] as Workout[]);
   const [picker, setPicker] = useState<{ mode: 'add' } | { mode: 'swap'; index: number } | null>(null);
   const [elapsed, setElapsed] = useState(() => Date.now() - workout.startedAt);
@@ -299,6 +301,8 @@ function ActiveWorkout({ workout, onChange }: ActiveProps) {
           }
           onPick={pickExercise}
           onClose={() => setPicker(null)}
+          onCreate={picker.mode === 'add' ? createExercise : undefined}
+
         />
       )}
     </>

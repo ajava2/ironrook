@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { exerciseName } from '../../data/catalog';
 import { moveItem } from '../../core/templates';
-import type { TemplateExercise, WorkoutTemplate } from '../../core/types';
+import type { Exercise, TemplateExercise, WorkoutTemplate } from '../../core/types';
 import { IconPlus, IconTrash } from '../../ui/icons';
 import { Sheet } from '../../ui/Sheet';
 import { ExercisePicker } from './ExercisePicker';
@@ -16,6 +16,7 @@ interface Props {
   onDelete?: (t: WorkoutTemplate) => void;
   onShare?: (t: WorkoutTemplate) => void;
   onClose: () => void;
+  onCreateExercise?: (e: Exercise) => Promise<void>;
 }
 
 /**
@@ -47,7 +48,7 @@ function NumField({ label, value, min, max, onChange }: { label: string; value: 
   );
 }
 
-export function TemplateEditor({ initial, newId, onSave, onDelete, onShare, onClose }: Props) {
+export function TemplateEditor({ initial, newId, onSave, onDelete, onShare, onClose, onCreateExercise }: Props) {
   const [name, setName] = useState(initial?.name ?? '');
   const [focus, setFocus] = useState<WorkoutTemplate['focus']>(initial?.focus ?? 'upper');
   const [weekday, setWeekday] = useState<number | undefined>(initial?.weekday);
@@ -173,6 +174,7 @@ export function TemplateEditor({ initial, newId, onSave, onDelete, onShare, onCl
         <ExercisePicker
           title="Añadir ejercicio"
           onClose={() => setPicking(false)}
+          onCreate={onCreateExercise}
           onPick={(id) => {
             setExercises((l) => [...l, { exerciseId: id, sets: 3, repMin: 8, repMax: 12, restSec: 120 }]);
             setPicking(false);

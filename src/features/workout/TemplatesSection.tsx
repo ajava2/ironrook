@@ -8,6 +8,7 @@ import { useAppData, useQuery } from '../../state/AppData';
 import { IconPlus } from '../../ui/icons';
 import { Sheet } from '../../ui/Sheet';
 import { TemplateEditor } from './TemplateEditor';
+import { useCreateExercise } from './useCreateExercise';
 
 const DAY_SHORT = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
@@ -26,6 +27,7 @@ export function TemplatesSection({ history, onStart }: Props) {
   const { repo, invalidate, toast } = useAppData();
   const templates = useQuery((r) => r.allTemplates(), [], [] as WorkoutTemplate[]);
   const [dialog, setDialog] = useState<Dialog>(null);
+  const createExercise = useCreateExercise();
 
   const save = async (t: WorkoutTemplate) => {
     const isNew = !templates.some((x) => x.id === t.id);
@@ -127,6 +129,7 @@ export function TemplatesSection({ history, onStart }: Props) {
           onDelete={remove}
           onShare={(t) => setDialog({ kind: 'share', template: t })}
           onClose={() => setDialog(null)}
+          onCreateExercise={createExercise}
         />
       )}
       {dialog?.kind === 'share' && <ShareSheet template={dialog.template} onClose={() => setDialog(null)} />}

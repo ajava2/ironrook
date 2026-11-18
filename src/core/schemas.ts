@@ -162,6 +162,19 @@ export const TemplateSchema = z.object({
     )
     .max(30),
 });
+export const MUSCLES = ['quads', 'hamstrings', 'glutes', 'adductors', 'calves', 'chest', 'back', 'shoulders', 'rear_delts', 'arms', 'core'] as const;
+export const EQUIPMENT = ['machine', 'smith', 'dumbbell', 'cable', 'barbell', 'bodyweight'] as const;
+
+/** Ejercicio creado por el usuario. Los ids propios empiezan por `custom_` para no pisar nunca el catálogo. */
+export const CustomExerciseSchema = z.object({
+  id: z.string().regex(/^custom_/),
+  name: z.string().trim().min(1).max(60),
+  primary: z.enum(MUSCLES),
+  secondary: z.array(z.enum(MUSCLES)).max(3).optional(),
+  equipment: z.enum(EQUIPMENT),
+  shoulderFriendly: z.boolean(),
+  increment: z.number().min(0.25).max(50),
+});
 export const BackupSchema = z.object({
   app: z.literal('fit-ai-tracker'),
   version: z.literal(1),
@@ -204,6 +217,7 @@ export const BackupSchema = z.object({
     }),
   ),
   templates: z.array(TemplateSchema).default([]),
+  customExercises: z.array(CustomExerciseSchema).default([]),
 });
 export type Backup = z.infer<typeof BackupSchema>;
 
