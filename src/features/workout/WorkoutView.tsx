@@ -5,27 +5,16 @@ import { createWorkout, finalizeWorkout, sessionStats } from '../../core/session
 import { dailyTargets } from '../../core/targets';
 import type { Workout, WorkoutSet, WorkoutTemplate } from '../../core/types';
 import { personalRecords, previousSets } from '../../core/volume';
-import { EXERCISE_MAP, EXERCISES, exerciseName, SHOULDER_SAFE_SWAPS, TEMPLATES } from '../../data/catalog';
+import { EXERCISE_MAP, exerciseName, SHOULDER_SAFE_SWAPS } from '../../data/catalog';
 import { useAppData, useQuery } from '../../state/AppData';
 import { useRestTimer } from '../../state/RestTimer';
 import { unlockAudio, vibrate } from '../../ui/feedback';
 import { IconPlus, IconTrash } from '../../ui/icons';
-import { Sheet } from '../../ui/Sheet';
+import { ExercisePicker } from './ExercisePicker';
+import { TemplatesSection } from './TemplatesSection';
 import { ExerciseCard } from './ExerciseCard';
 import './workout.css';
 
-const GROUP_LABEL: Record<string, string> = {
-  quads: 'Cuádriceps',
-  hamstrings: 'Femoral',
-  glutes: 'Glúteo',
-  adductors: 'Aductores',
-  calves: 'Gemelo',
-  chest: 'Pecho',
-  back: 'Espalda',
-  shoulders: 'Hombro',
-  rear_delts: 'Deltoides posterior',
-  arms: 'Brazos',
-};
 
 export function WorkoutView() {
   const { repo } = useAppData();
@@ -68,38 +57,7 @@ function WorkoutHome({ onStart }: { onStart: (w: Workout) => void }) {
 
   return (
     <>
-      {TEMPLATES.map((tpl) => {
-        const last = [...history].reverse().find((w) => w.templateId === tpl.id);
-        return (
-          <section key={tpl.id} className="card template-card">
-            <div className="spread">
-              <div>
-                <div className="exercise-name">{tpl.name}</div>
-                <div className="small faint">
-                  {last ? `Último: ${formatWeekday(last.date)}` : 'Sin registros'} · {tpl.exercises.length} ejercicios
-                </div>
-              </div>
-              <span className={`chip ${tpl.focus === 'legs' ? 'chip-accent' : 'chip-amber'}`}>
-                {tpl.focus === 'legs' ? 'PRIORIDAD' : 'HOMBRO SEGURO'}
-              </span>
-            </div>
-            <ul>
-              {tpl.exercises.map((e) => (
-                <li key={e.exerciseId}>
-                  {exerciseName(e.exerciseId)}{' '}
-                  <span className="faint">
-                    {e.sets}×{e.repMin}-{e.repMax}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <button className={`btn ${tpl.focus === 'legs' ? 'btn-primary' : 'btn-amber'}`} onClick={() => start(tpl)}>
-              Empezar
-            </button>
-          </section>
-        );
-      })}
-
+    <TemplatesSection history={history} onStart={start} />
       <button className="btn btn-block" onClick={() => start()}>
         <IconPlus size={18} /> Entreno libre
       </button>
@@ -337,7 +295,7 @@ function ActiveWorkout({ workout, onChange }: ActiveProps) {
           options={
             picker.mode === 'swap'
               ? (SHOULDER_SAFE_SWAPS[workout.exercises[picker.index]!.exerciseId] ?? [])
-              : EXERCISES.map((e) => e.id)
+              : undefined
           }
           onPick={pickExercise}
           onClose={() => setPicker(null)}
@@ -347,34 +305,3 @@ function ActiveWorkout({ workout, onChange }: ActiveProps) {
   );
 }
 
-function ExercisePicker({
-  title,
-  options,
-  onPick,
-  onClose,
-}: {
-  title: string;
-  options: string[];
-  onPick: (id: string) => void;
-  onClose: () => void;
-}) {
-  return (
-    <Sheet title={title} onClose={onClose}>
-      <div className="picker-list">
-        {options.map((id) => {
-          const e = EXERCISE_MAP.get(id);
-          if (!e) return null;
-          return (
-            <button key={id} className="picker-item" onClick={() => onPick(id)}>
-              <span>
-                <div style={{ fontWeight: 650 }}>{e.name}</div>
-                <div className="small faint">{GROUP_LABEL[e.primary]}</div>
-              </span>
-              {e.shoulderFriendly ? <span className="chip chip-accent">hombro OK</span> : <span className="chip chip-amber">precaución</span>}
-            </button>
-          );
-        })}
-      </div>
-    </Sheet>
-  );
-}

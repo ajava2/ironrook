@@ -19,7 +19,8 @@ export type MuscleGroup =
   | 'back'
   | 'shoulders'
   | 'rear_delts'
-  | 'arms';
+  | 'arms'
+  | 'core';
 
 export interface Exercise {
   id: string;

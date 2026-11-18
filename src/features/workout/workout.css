@@ -269,3 +269,15 @@
 .dock-spacer {
   height: 96px;
 }
+/* Pegar al final de src/features/workout/workout.css */
+.editor { display: flex; flex-direction: column; gap: 10px; }
+.editor-ex { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); }
+.editor-nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.editor-nums .input { padding: 8px 6px; text-align: center; }
+.empty-start { display: flex; flex-direction: column; gap: 8px; }
+/* Pegar al final de src/features/workout/workout.css */
+.editor { display: flex; flex-direction: column; gap: 10px; }
+.editor-ex { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); }
+.editor-nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.editor-nums .input { padding: 8px 6px; text-align: center; }
+.empty-start { display: flex; flex-direction: column; gap: 8px; }

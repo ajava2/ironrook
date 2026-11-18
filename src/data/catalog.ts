@@ -1,4 +1,4 @@
-import type { Exercise, WorkoutTemplate } from '../core/types';
+import type { Exercise, MuscleGroup, WorkoutTemplate } from '../core/types';
 
 export const EXERCISES: Exercise[] = [
   { id: 'v_squat', name: 'V-Squat', primary: 'quads', secondary: ['glutes'], equipment: 'machine', shoulderFriendly: true, increment: 5 },
@@ -21,6 +21,23 @@ export const EXERCISES: Exercise[] = [
   { id: 'single_arm_cable_row', name: 'Remo unilateral en polea', primary: 'back', equipment: 'cable', shoulderFriendly: true, increment: 2.5 },
   { id: 'cable_curl', name: 'Curl de bíceps en polea', primary: 'arms', equipment: 'cable', shoulderFriendly: true, increment: 2.5 },
   { id: 'triceps_pushdown', name: 'Extensión de tríceps en polea', primary: 'arms', equipment: 'cable', shoulderFriendly: true, increment: 2.5 },
+  { id: 'rdl', name: 'Peso muerto rumano', primary: 'hamstrings', secondary: ['glutes'], equipment: 'barbell', shoulderFriendly: false, increment: 2.5 },
+  { id: 'leg_press_high', name: 'Prensa pies altos', primary: 'glutes', secondary: ['hamstrings', 'quads'], equipment: 'machine', shoulderFriendly: true, increment: 10 },
+  { id: 'bulgarian_split_squat', name: 'Sentadilla búlgara', primary: 'quads', secondary: ['glutes'], equipment: 'dumbbell', shoulderFriendly: false, increment: 2 },
+  { id: 'lying_leg_curl', name: 'Curl femoral tumbado', primary: 'hamstrings', equipment: 'machine', shoulderFriendly: true, increment: 5 },
+  { id: 'seated_leg_curl', name: 'Curl femoral sentado', primary: 'hamstrings', equipment: 'machine', shoulderFriendly: true, increment: 5 },
+  { id: 'seated_calf_raise', name: 'Gemelo sentado', primary: 'calves', equipment: 'machine', shoulderFriendly: true, increment: 5 },
+  { id: 'hip_adduction', name: 'Máquina de aductores', primary: 'adductors', equipment: 'machine', shoulderFriendly: true, increment: 5 },
+  { id: 'cable_crunch', name: 'Crunch en polea', primary: 'core', equipment: 'cable', shoulderFriendly: true, increment: 2.5 },
+  { id: 'incline_machine_press', name: 'Press inclinado en máquina', primary: 'chest', secondary: ['shoulders', 'arms'], equipment: 'machine', shoulderFriendly: true, increment: 5 },
+  { id: 'db_flat_press', name: 'Press plano con mancuernas', primary: 'chest', secondary: ['arms'], equipment: 'dumbbell', shoulderFriendly: false, increment: 2 },
+  { id: 'machine_shoulder_press', name: 'Press militar en máquina', primary: 'shoulders', secondary: ['arms'], equipment: 'machine', shoulderFriendly: false, increment: 5 },
+  { id: 'overhead_triceps_ext', name: 'Extensión de tríceps sobre la cabeza', primary: 'arms', equipment: 'cable', shoulderFriendly: true, increment: 2.5 },
+  { id: 'neutral_pulldown', name: 'Jalón neutro', primary: 'back', secondary: ['arms'], equipment: 'cable', shoulderFriendly: true, increment: 5 },
+  { id: 'cable_pullover', name: 'Pullover en polea', primary: 'back', equipment: 'cable', shoulderFriendly: true, increment: 2.5 },
+  { id: 'incline_db_curl', name: 'Curl inclinado con mancuernas', primary: 'arms', equipment: 'dumbbell', shoulderFriendly: true, increment: 1 },
+  { id: 'hammer_curl', name: 'Curl martillo', primary: 'arms', equipment: 'dumbbell', shoulderFriendly: true, increment: 2 },
+  { id: 'db_one_arm_row', name: 'Remo unilateral con mancuerna', primary: 'back', secondary: ['rear_delts'], equipment: 'dumbbell', shoulderFriendly: true, increment: 2 },
 ];
 
 export const EXERCISE_MAP: ReadonlyMap<string, Exercise> = new Map(EXERCISES.map((e) => [e.id, e]));
@@ -70,3 +87,17 @@ export const TEMPLATES: WorkoutTemplate[] = [
 export function exerciseName(id: string): string {
   return EXERCISE_MAP.get(id)?.name ?? id;
 }
+
+export const GROUP_LABEL: Record<MuscleGroup, string> = {
+  quads: 'Cuádriceps',
+  hamstrings: 'Femoral',
+  glutes: 'Glúteo',
+  adductors: 'Aductores',
+  calves: 'Gemelo',
+  chest: 'Pecho',
+  back: 'Espalda',
+  shoulders: 'Hombro',
+  rear_delts: 'Deltoides posterior',
+  arms: 'Brazos',
+  core: 'Core',
+};
