@@ -3,10 +3,10 @@ import type { Favorite, MealItem, Profile } from '../core/types';
 import { BUILTIN_FOODS } from './foodDb';
 
 export const DEFAULT_PROFILE: Profile = {
-  heightCm: 184,
-  weightKg: 75,
-  goal: 'Recomposición corporal y ganancia limpia (+2-3 kg magros)',
-  targets: { kcal: 2000, protein: 150, carbs: 220, fat: 65 },
+  heightCm: 175,
+  weightKg: 70,
+  goal: 'Ganar músculo',
+  targets: { kcal: 2400, protein: 140, carbs: 280, fat: 70 },
   legDayBonusKcal: 200,
   legDaySetThreshold: 12,
   restSec: 120,

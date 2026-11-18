@@ -37,7 +37,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     (async () => {
       try {
         const r = new Repository(await openFitDb());
-        await r.seedIfEmpty();
+        await r.seedIfEmpty(undefined, { demo: false });
         const p = await r.getProfile();
         if (!cancelled) {
           setProfileState(p);

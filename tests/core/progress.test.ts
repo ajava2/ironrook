@@ -2,7 +2,17 @@ import { describe, expect, it } from 'vitest';
 import { averageAdherence, dailyAdherence } from '../../src/core/progress';
 import type { MealEntry, Workout } from '../../src/core/types';
 import { EXERCISE_MAP } from '../../src/data/catalog';
-import { DEFAULT_PROFILE } from '../../src/data/defaults';
+
+// Perfil fijo para el test: así no depende de los valores por defecto de la app.
+const DEFAULT_PROFILE = {
+  heightCm: 184,
+  weightKg: 75,
+  goal: 'test',
+  targets: { kcal: 2000, protein: 150, carbs: 220, fat: 65 },
+  legDayBonusKcal: 200,
+  legDaySetThreshold: 12,
+  restSec: 120,
+};
 
 const meal = (date: string, kcal: number): MealEntry => ({
   id: `${date}-${kcal}`,

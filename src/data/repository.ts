@@ -34,9 +34,9 @@ export class Repository {
   /* ---------- Arranque ---------- */
 
   /** Primera ejecución: perfil por defecto, favoritos y 3 semanas de demo. Idempotente. */
-  async seedIfEmpty(todayIso: ISODate = today()): Promise<boolean> {
+    async seedIfEmpty(todayIso: ISODate = today(), opts: { demo?: boolean } = {}): Promise<boolean> {
     if (await this.db.get('meta', META.seeded)) return false;
-    const demo = generateDemo(todayIso);
+    const demo = opts.demo === false ? { workouts: [], meals: [], weights: [] } : generateDemo(todayIso);
     const tx = this.db.transaction(['meta', 'favorites', 'workouts', 'meals', 'weights'], 'readwrite');
     await Promise.all([
       tx.objectStore('meta').put(DEFAULT_PROFILE, META.profile),

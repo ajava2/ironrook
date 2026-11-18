@@ -38,6 +38,7 @@ export const EXERCISES: Exercise[] = [
   { id: 'incline_db_curl', name: 'Curl inclinado con mancuernas', primary: 'arms', equipment: 'dumbbell', shoulderFriendly: true, increment: 1 },
   { id: 'hammer_curl', name: 'Curl martillo', primary: 'arms', equipment: 'dumbbell', shoulderFriendly: true, increment: 2 },
   { id: 'db_one_arm_row', name: 'Remo unilateral con mancuerna', primary: 'back', secondary: ['rear_delts'], equipment: 'dumbbell', shoulderFriendly: true, increment: 2 },
+  { id: 'spanish_squat_iso', name: 'Sentadilla española isométrica (reps = segundos)', primary: 'quads', equipment: 'bodyweight', shoulderFriendly: true, increment: 5 },
 ];
 
 export const EXERCISE_MAP: ReadonlyMap<string, Exercise> = new Map(EXERCISES.map((e) => [e.id, e]));
