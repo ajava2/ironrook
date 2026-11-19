@@ -14,8 +14,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Fit AI Tracker',
-        short_name: 'FitAI',
+        name: 'IronRook',
+        short_name: 'IronRook',
         description: 'Entrenamiento y nutrición con IA, offline-first',
         lang: 'es',
         theme_color: '#0f0f11',

@@ -1,70 +1,79 @@
-# Fit AI Tracker
+# IronRook
 
-App web (PWA) para registrar entrenamientos de fuerza y nutrición, con IA opcional. Funciona sin
-servidor: todos los datos se guardan en el propio móvil (IndexedDB), así que cada persona tiene
-sus datos y no hay cuentas ni registros.
+Una app para apuntar tus entrenos de fuerza y tu comida desde el móvil. Funciona sin conexión,
+no necesita cuenta y todo lo que registras se queda en tu propio teléfono.
 
-- **Entreno**: crea tus rutinas, apunta series con el peso anterior a la vista, temporizador de
-  descanso, récords personales y volumen.
-- **Nutrición**: comidas favoritas en un toque, texto libre, código de barras, etiquetas y foto del
-  plato (IA opcional).
-- **Coach IA**: chat con el contexto de tu día.
-- **Progreso**: peso con tendencia, cumplimiento calórico, volumen semanal y 1RM estimado.
+Empecé a hacerla porque quería algo parecido a Hevy y MyFitnessPal pero en una sola app, sin
+suscripción y con mis rutinas bajo mi control. La fui ampliando para que pudiera usarla también
+mi familia, así que cada persona crea sus rutinas y tiene sus propios datos.
+
+## Qué hace
+
+- **Entreno.** Creas tus rutinas (ejercicios, series, rango de repeticiones, descanso), las
+  ordenas y las compartes con un código que se pega en otro móvil. Mientras entrenas ves lo que
+  hiciste la última vez, tienes temporizador de descanso y la app te avisa de récords personales.
+- **Nutrición.** Comidas favoritas en un toque, texto libre ("120 g de arroz"), código de barras,
+  etiquetas y foto del plato. Tiene un objetivo de calorías y macros que se ajusta los días de
+  pierna.
+- **Coach.** Un chat que conoce lo que has comido y entrenado ese día.
+- **Progreso.** Peso con línea de tendencia, cumplimiento de calorías, volumen semanal y 1RM
+  estimado.
+
+Los ejercicios que no estén en el catálogo se crean desde el propio selector.
 
 ## Usarla en el móvil
 
-1. Abre la dirección de la app en el navegador del móvil (Safari en iPhone).
-2. Pulsa **Compartir → Añadir a pantalla de inicio**. Así se instala y funciona sin conexión.
-3. En **Entreno** pulsa **Crear rutina**, o pega el código que te haya pasado alguien con
-   **Pegar código**.
+Abre la dirección de la app en Safari (iPhone) o Chrome (Android) y elige **Añadir a pantalla de
+inicio**. Una vez instalada funciona sin internet.
 
-Tus datos están solo en ese móvil. Para cambiar de móvil o hacer copia, usa
-**Ajustes → Exportar copia completa**.
+Como los datos viven en el navegador del móvil, si lo cambias o borras los datos del sitio los
+pierdes. Haz copia de vez en cuando en **Ajustes → Exportar copia completa**.
 
-### Compartir una rutina
+### La IA es opcional
 
-Abre la rutina → **Editar** → **Compartir** y manda el código por mensaje. Quien lo reciba lo
-pega en **Entreno → Pegar código**. Cada uno guarda su propia copia.
-
-### IA (opcional)
-
-Sin configurar nada, la app funciona con un modo local (texto libre y coach basado en reglas).
-Para usar IA real, crea una clave gratuita en <https://aistudio.google.com/apikey> y pégala en
-**Ajustes → Inteligencia artificial**. La clave se queda en tu navegador y nunca se sube a ningún
-sitio.
+Sin configurar nada, la app usa un modo local (el texto libre se interpreta con reglas y el coach
+responde con plantillas). Si quieres IA de verdad, crea una clave gratuita de Gemini en
+<https://aistudio.google.com/apikey> y pégala en **Ajustes → Inteligencia artificial**. La clave
+se guarda solo en tu navegador. También funciona con Groq y con Ollama en local.
 
 ## Desarrollo
 
-Requiere Node 20 o superior.
+Hace falta Node 20 o superior.
 
 ```bash
 npm install
-npm run dev       # http://localhost:5173
-npm test          # tests de la lógica y de la base de datos
-npm run build     # genera dist/
+npm run dev      # http://localhost:5173
+npm test
+npm run build    # genera dist/
 ```
 
-### Dónde tocar
+El código está dividido en capas que solo se pueden llamar en un sentido:
+`features → state → data / services → core`. En `core/` está toda la lógica (cálculos,
+formatos, validación) sin nada de React ni de navegador, así se prueba sin más. Si cambias la
+forma de los datos guardados, añade una migración nueva en `src/data/db.ts` y no toques las
+anteriores.
 
-| Quiero cambiar… | Mira en |
+| Para tocar... | Mira en |
 |---|---|
-| Una pantalla | `src/features/<pestaña>/` |
-| El catálogo de ejercicios | `src/data/catalog.ts` |
-| Valores por defecto (perfil, favoritos) | `src/data/defaults.ts` |
-| Una fórmula o cálculo | `src/core/` (lógica pura, con tests en `tests/core/`) |
-| La base de datos | `src/data/db.ts` (migraciones) y `src/data/repository.ts` |
-| Colores y estilos base | `src/styles/global.css` |
+| una pantalla | `src/features/` |
+| el catálogo de ejercicios | `src/data/catalog.ts` |
+| los valores iniciales | `src/data/defaults.ts` |
+| una fórmula | `src/core/` y sus tests en `tests/core/` |
+| la base de datos | `src/data/db.ts` y `src/data/repository.ts` |
 
-Regla de dependencias: `features → state → data/services → core`. `core` no importa nada del
-resto, por eso se puede probar sin navegador.
-
-Antes de abrir un cambio, ejecuta `npm test` y `npm run build`. Si cambias la forma de los
-datos guardados, añade una migración en `src/data/db.ts` (nunca edites una versión anterior).
-
-Guía completa del código, con diagramas y fórmulas: [`ARQUITECTURA.md`](./ARQUITECTURA.md).
+Hay una explicación más larga, con los diagramas de cómo viajan los datos, en
+[`ARQUITECTURA.md`](./ARQUITECTURA.md).
 
 ## Publicar
 
-Es una web estática: sirve cualquier hosting. Con Netlify, conecta el repositorio y listo
-(`netlify.toml` ya trae el comando de build y la carpeta `dist`). También se puede arrastrar la
-carpeta `dist/` generada con `npm run build` a <https://app.netlify.com/drop>.
+Es una web estática. En Netlify basta con conectar el repositorio (el `netlify.toml` ya trae la
+configuración), o arrastrar la carpeta `dist/` a <https://app.netlify.com/drop>.
+
+## Sobre este proyecto
+
+Lo estoy desarrollando mientras aprendo programación, con ayuda de IA (Claude) como asistente
+para escribir código, revisarlo y explicarme las partes que no conozco.
+
+## Licencia
+
+MIT. Mira el archivo [`LICENSE`](./LICENSE).
