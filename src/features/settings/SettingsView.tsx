@@ -45,7 +45,7 @@ export function SettingsView({ onClose }: { onClose: () => void }) {
       <DataSection />
       <SyncSection />
       <p className="small faint" style={{ textAlign: 'center' }}>
-        Fit AI Tracker · datos 100 % locales en IndexedDB · v1.0
+        IronRook · datos 100 % locales en IndexedDB · v1.0
       </p>
     </>
   );
