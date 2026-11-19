@@ -51,7 +51,7 @@ export function App() {
     <div className="app">
       <header className="topbar">
         <div>
-          <div className="sub">Fit AI Tracker</div>
+          <div className="sub">IronRook</div>
           <h1>{title}</h1>
         </div>
         {route !== 'settings' && (
